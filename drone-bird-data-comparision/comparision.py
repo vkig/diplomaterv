@@ -13,21 +13,28 @@ generator_switch_dict = {
     "2drefldistance": False,
     "2dreflangle": False,
     "nophist": False,
-    "2drefldistancestd": True,
-    "2dreflanglestd": True,
-    "reflhist": True
+    "2drefldistancestd": False,
+    "2dreflanglestd": False,
+    "reflhist": False,
+    "std_comparison": True
 }
 
 database_meta = {
     "bird": {
         "name": "madár",
         "root": "..\\database\\2023_04_28_galambok",
-        "match_pattern": "bird"
+        "match_pattern": "bird",
+        "longest": "bird_05",
+        "max_reflectivity_on_longest": 31,
+        "min_reflectivity_on_longest": 0,
     },
     "drone": {
         "name": "drón",
         "root": "..\\database\\2022_09_12_11_02_11_feher_drone",
-        "match_pattern": "movement"
+        "match_pattern": "movement",
+        "longest": "movement_04",
+        "max_reflectivity_on_longest": 58,
+        "min_reflectivity_on_longest": 0,
     }
 }
 distance_dict = {
@@ -51,6 +58,18 @@ angle_dict = {
     "drone": []
 }
 
+longest_movements_reflectivity_histogram = {
+    "bird": [],
+    "drone": [],
+    "drone_points": [],
+    "bird_points": [],
+}
+
+histogram_range = min(database_meta["bird"]["min_reflectivity_on_longest"],
+                      database_meta["drone"]["min_reflectivity_on_longest"]), \
+        max(database_meta["bird"]["max_reflectivity_on_longest"],
+            database_meta["drone"]["max_reflectivity_on_longest"]),
+
 for database in database_meta:
     dirs = list(filter(lambda x: x.startswith(database_meta[database]["match_pattern"]),
                        listdir(database_meta[database]["root"])))
@@ -73,8 +92,10 @@ for database in database_meta:
         Y_avg = np.mean(Y)
         Z_avg = np.mean(Z)
         R_avg = np.mean(Reflectivity)
-        #print(
-        #    f"distance: {np.sqrt(X_avg ** 2 + Y_avg ** 2 + Z_avg ** 2)} points on the {file}: {len(cloud)} reflectivity: {R_avg}")
+
+        if database_meta[database]["longest"] in file:
+            longest_movements_reflectivity_histogram[database].append(Reflectivity)
+            longest_movements_reflectivity_histogram[database+"_points"].append(len(Reflectivity))
 
         distance_dict[database].append(np.sqrt(X_avg ** 2 + Y_avg ** 2 + Z_avg ** 2))
         reflectivity_std_dict[database].append(np.std(Reflectivity))
@@ -93,7 +114,6 @@ reflectivity_heatmap_bird, reflectivity_xedges_bird, reflectivity_yedges_bird = 
                                                                                                reflectivity_dict[
                                                                                                    "bird"],
                                                                                                bins=25)
-
 
 number_of_points_heatmap_bird, number_of_points_xedges_bird, number_of_points_yedges_bird = np.histogram2d(
     angle_dict["bird"], distance_dict["bird"], weights=point_number_dict["bird"], bins=25)
@@ -125,13 +145,15 @@ if generator_switch_dict["reflectivity"]:
     ax1.set_title("Madarak")
     ax1.set_xlabel("Abszolút szög a LiDAR x tengelye és az objektum között [°]")
     ax1.set_ylabel("Madár távolsága a LiDARtól [m]")
-    ax1.imshow(reflectivity_heatmap_bird.T, extent=reflectivity_extent_bird, origin="lower", vmin=min_reflectivity_value,
+    ax1.imshow(reflectivity_heatmap_bird.T, extent=reflectivity_extent_bird, origin="lower",
+               vmin=min_reflectivity_value,
                vmax=max_reflectivity_value)
     ax2.set_title("Drón")
     ax2.set_xlabel("Abszolút szög a LiDAR x tengelye és az objektum között [°]")
     ax2.set_ylabel("Drón távolsága a LiDARtól [m]")
-    im = ax2.imshow(reflectivity_heatmap_drone.T, extent=reflectivity_extent_bird, origin="lower", vmin=min_reflectivity_value,
-               vmax=max_reflectivity_value)
+    im = ax2.imshow(reflectivity_heatmap_drone.T, extent=reflectivity_extent_bird, origin="lower",
+                    vmin=min_reflectivity_value,
+                    vmax=max_reflectivity_value)
     fig.subplots_adjust(right=0.9)
     cbar_ax = fig.add_axes([0.925, 0.15, 0.01, 0.7])
     fig.colorbar(im, cax=cbar_ax)
@@ -144,12 +166,14 @@ if generator_switch_dict["nop"]:
     ax1.set_title("Madár")
     ax1.set_xlabel("Abszolút szög a LiDAR x tengelye és az objektum között [°]")
     ax1.set_ylabel("Madár távolsága a LiDARtól [m]")
-    ax1.imshow(number_of_points_heatmap_bird.T, extent=number_of_points_extent_bird, origin="lower", vmin=min_number_of_points,
+    ax1.imshow(number_of_points_heatmap_bird.T, extent=number_of_points_extent_bird, origin="lower",
+               vmin=min_number_of_points,
                vmax=max_number_of_points)
     ax2.set_title("Drón")
     ax2.set_xlabel("Abszolút szög a LiDAR x tengelye és az objektum között [°]")
     ax2.set_ylabel("Drón távolsága a LiDARtól [m]")
-    ax2.imshow(number_of_points_heatmap_drone.T, extent=number_of_points_extent_bird, origin="lower", vmin=min_number_of_points,
+    ax2.imshow(number_of_points_heatmap_drone.T, extent=number_of_points_extent_bird, origin="lower",
+               vmin=min_number_of_points,
                vmax=max_number_of_points)
     fig.subplots_adjust(right=0.9)
     cbar_ax = fig.add_axes([0.925, 0.15, 0.01, 0.7])
@@ -235,8 +259,10 @@ if generator_switch_dict["2drefldistancestd"]:
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot()
     fig.suptitle("Reflektivitás a LiDAR-tól vett távolság függvényében")
-    ax.errorbar(distance_dict["bird"], reflectivity_dict["bird"], reflectivity_std_dict["bird"], linestyle="None", marker='^', label="madár")
-    ax.errorbar(distance_dict["drone"], reflectivity_dict["drone"], reflectivity_std_dict["drone"], linestyle="None", marker='o', label="drón")
+    ax.errorbar(distance_dict["bird"], reflectivity_dict["bird"], reflectivity_std_dict["bird"], linestyle="None",
+                marker='^', label="madár")
+    ax.errorbar(distance_dict["drone"], reflectivity_dict["drone"], reflectivity_std_dict["drone"], linestyle="None",
+                marker='o', label="drón")
     ax.set_xlabel("Objektum távolsága a LiDARtól [m]")
     ax.set_ylabel("Átlagos reflektivitás az objektumon")
     ax.legend()
@@ -254,5 +280,34 @@ if generator_switch_dict["2dreflanglestd"]:
     ax.set_ylabel("Átlagos reflektivitás az objektumon")
     ax.legend()
     plt.show()
+
+if generator_switch_dict["reflhist"]:
+    i = 0
+    for i in range(len(longest_movements_reflectivity_histogram["drone"])):
+        fig = plt.figure()
+        ax = fig.add_subplot()
+        fig.suptitle(f"Reflektivitás hisztogram a kiválasztott drónon a mozdulat {i}. lépésében")
+        ax.hist(longest_movements_reflectivity_histogram["drone"][i], 10, histogram_range)
+        ax.set_xlabel("Reflectivitás érték")
+        ax.set_ylabel("Pontok száma")
+        plt.savefig("movement_05_" + str(i) + ".png")
+        plt.close(fig)
+
+if generator_switch_dict["std_comparison"]:
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_size_inches(12, 6)
+    fig.suptitle(f"Az objektumokról visszaverődött pontok reflektivitásának szórásáról készült hisztogramok összehasonlítása")
+    ax1.set_title("Szórás hisztogram a madarakon")
+    ax1.hist(reflectivity_std_dict["bird"], 20, (0, 35), rwidth=0.8)
+    ax1.set_xlabel("Szórás értékek")
+    ax1.set_ylabel("A mérések száma adott szórással")
+    ax1.set_ylim([0, 25])
+    ax2.set_title("Szórás hisztogram a drónon")
+    ax2.hist(reflectivity_std_dict["drone"], 20, (0, 35), rwidth=0.8, color="orange")
+    ax2.set_xlabel("Szórás értékek")
+    ax2.set_ylabel("A mérések száma adott szórással")
+    ax2.set_ylim([0, 25])
+    plt.show()
+
 
 # ax.errorbar(distance_dict["bird"], reflectivity_dict["bird"], reflectivity_std_dict["bird"], linestyle="None", marker='^', label="madár")
