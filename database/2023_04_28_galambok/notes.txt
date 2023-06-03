@@ -1,0 +1,36 @@
+bird_01 - 2:38 első frame nem kiszedhető
+bird_01 - eltűnik két frame-re a bird_01_02 és bird_01_03 között
+bird_01 - 04 és 05 között is kimaradt egy frame
+bird_01 - 06 után leszállt
+
+bird_02 - 2:43-kor tűnik fel a hídról jön
+bird_02 - 08 után landolt
+
+bird_03 - 2:45-kor tűnik fel
+bird_03 - a 06-os után nem jelölhetőek ki megfelelően a pontok
+bird_03 - 11 után landolt
+
+bird_04 - 2:46-kor tűnik fel a hídról jön
+bird_04 - 03 csak egy pont látható róla
+bird_04 - 07-nél furcsa a kijelölés, de valami sikerült
+bird_04 - 12 után landolt
+
+bird_05 - 0:46 távolban feltűnik 2 pont
+bird_05 - 04-nél meghalt a livox viewer
+bird_05 - 34 után landolt 02:50-nél
+
+bird_06 - 3:22 lentről
+bird_06 - 09 1 pont, utána egy hibás frame
+bird_06 - 15 után megint hibás
+bird_06 - 16 után kimarad egy frame
+bird_06 - 17 után megint furcsa
+bird_06 - 18 1 pont
+bird_06 - 20 után nem megkülönböztethet, hogy melyik ő
+
+bird_07 - 07:05-nél hídról
+
+bird_08 - 3:25-kor fordul vissza a híd fele
+bird_08 - az elején nehezen kijelölhető, hiba is van
+bird_08 - 18 után egy frame kimarad
+bird_08 - 25 után már csak 1 pixel 
+ 

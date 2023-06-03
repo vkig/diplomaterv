@@ -21,12 +21,12 @@ generator_switch_dict = {
 database_meta = {
     "bird": {
         "name": "madár",
-        "root": "2023_04_28_galambok",
+        "root": "..\\database\\2023_04_28_galambok",
         "match_pattern": "bird"
     },
     "drone": {
         "name": "drón",
-        "root": "2022_09_12_11_02_11_feher_drone",
+        "root": "..\\database\\2022_09_12_11_02_11_feher_drone",
         "match_pattern": "movement"
     }
 }

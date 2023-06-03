@@ -1,0 +1,3 @@
+Version,Slot ID,LiDAR Index,Rsvd,Error Code,Timestamp Type,Data Type,Timestamp,X,Y,Z,Reflectivity,Tag,Ori_x,Ori_y,Ori_z,Ori_radius,Ori_theta,Ori_phi
+5,1,1,0,0x00000000,0,2,3282112385880,16.41,-5.642,2.337,0,16,16410,-5642,2337,0,0,0
+5,1,1,0,0x00000000,0,2,3282112385880,16.382,-5.76,2.328,18,16,16382,-5760,2328,0,0,0
