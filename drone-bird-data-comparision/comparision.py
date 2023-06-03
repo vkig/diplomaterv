@@ -12,11 +12,15 @@ generator_switch_dict = {
     "3dangle": False,
     "2drefldistance": False,
     "2dreflangle": False,
+    "2dreflstddistance": False,
+    "2dreflstdangle": False,
     "nophist": False,
     "2drefldistancestd": False,
     "2dreflanglestd": False,
+    "reflectivityavgstd": True,
     "reflhist": False,
-    "std_comparison": True
+    "std_comparison": False,
+    "refl_comparison": False,
 }
 
 database_meta = {
@@ -184,10 +188,10 @@ if generator_switch_dict["3ddistance"]:
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(projection='3d')
     fig.suptitle("A madarak és a drón elhelyezve a mérési adatok terében")
-    ax.scatter(distance_dict["bird"], point_number_dict["bird"], reflectivity_dict["bird"], marker='^', label="madár")
-    ax.scatter(distance_dict["drone"], point_number_dict["drone"], reflectivity_dict["drone"], marker='o', label="drón")
+    ax.scatter(distance_dict["bird"], reflectivity_std_dict["bird"], reflectivity_dict["bird"], marker='^', label="madár")
+    ax.scatter(distance_dict["drone"], reflectivity_std_dict["drone"], reflectivity_dict["drone"], marker='o', label="drón")
     ax.set_xlabel("Objektum távolsága a LiDARtól [m]")
-    ax.set_ylabel("Mért pontok száma az objektumon")
+    ax.set_ylabel("Reflektivitás szórása az objektumon")
     ax.set_zlabel("Átlagos reflektivitás az objektumon")
     ax.legend()
     plt.show()
@@ -196,10 +200,10 @@ if generator_switch_dict["3dangle"]:
     fig = plt.figure(figsize=(8, 8))
     ax = fig.add_subplot(projection='3d')
     fig.suptitle("A madarak és a drón elhelyezve a mérési adatok terében")
-    ax.scatter(angle_dict["bird"], point_number_dict["bird"], reflectivity_dict["bird"], marker='^', label="madár")
-    ax.scatter(angle_dict["drone"], point_number_dict["drone"], reflectivity_dict["drone"], marker='o', label="drón")
+    ax.scatter(angle_dict["bird"], reflectivity_std_dict["bird"], reflectivity_dict["bird"], marker='^', label="madár")
+    ax.scatter(angle_dict["drone"], reflectivity_std_dict["drone"], reflectivity_dict["drone"], marker='o', label="drón")
     ax.set_xlabel("Abszolút szög a LiDAR x tengelye és az objektum között [°]")
-    ax.set_ylabel("Mért pontok száma az objektumon")
+    ax.set_ylabel("Reflektivitás szórása az objektumon")
     ax.set_zlabel("Átlagos reflektivitás az objektumon")
     ax.legend()
     plt.show()
@@ -227,6 +231,18 @@ if generator_switch_dict["2dreflangle"]:
     ax.legend()
     plt.show()
 
+if generator_switch_dict["reflectivityavgstd"]:
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot()
+    fig.suptitle("Objektumok a reflektivitás átlagának és szórásának terében")
+    ax.scatter(reflectivity_std_dict["bird"], reflectivity_dict["bird"], marker='^', label="madár")
+    ax.scatter(reflectivity_std_dict["drone"], reflectivity_dict["drone"], marker='o', label="drón")
+    ax.set_xlabel("Reflektivitás szórása az objektumon")
+    ax.set_ylabel("Átlagos reflektivitás az objektumon")
+    ax.plot([0, 32], [30, 0], 'r')
+    ax.legend()
+    plt.show()
+
 if generator_switch_dict["2drefldistance"]:
     fig = plt.figure(figsize=(8, 6))
     ax = fig.add_subplot()
@@ -235,6 +251,28 @@ if generator_switch_dict["2drefldistance"]:
     ax.scatter(distance_dict["drone"], reflectivity_dict["drone"], marker='o', label="drón")
     ax.set_xlabel("Objektum távolsága a LiDARtól [m]")
     ax.set_ylabel("Átlagos reflektivitás az objektumon")
+    ax.legend()
+    plt.show()
+
+if generator_switch_dict["2dreflstdangle"]:
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot()
+    fig.suptitle("Reflektivitás szórása az elhajlási szög függvényében")
+    ax.scatter(angle_dict["bird"], reflectivity_std_dict["bird"], marker='^', label="madár")
+    ax.scatter(angle_dict["drone"], reflectivity_std_dict["drone"], marker='o', label="drón")
+    ax.set_xlabel("Abszolút szög a LiDAR x tengelye és az objektum között [°]")
+    ax.set_ylabel("Reflektivitás szórása az objektumon")
+    ax.legend()
+    plt.show()
+
+if generator_switch_dict["2dreflstddistance"]:
+    fig = plt.figure(figsize=(8, 6))
+    ax = fig.add_subplot()
+    fig.suptitle("Reflektivitás szórása a LiDAR-tól vett távolság függvényében")
+    ax.scatter(distance_dict["bird"], reflectivity_std_dict["bird"], marker='^', label="madár")
+    ax.scatter(distance_dict["drone"], reflectivity_std_dict["drone"], marker='o', label="drón")
+    ax.set_xlabel("Objektum távolsága a LiDARtól [m]")
+    ax.set_ylabel("Reflektivitás szórása az objektumon")
     ax.legend()
     plt.show()
 
@@ -309,5 +347,48 @@ if generator_switch_dict["std_comparison"]:
     ax2.set_ylim([0, 25])
     plt.show()
 
+if generator_switch_dict["refl_comparison"]:
+    fig, (ax1, ax2) = plt.subplots(1, 2)
+    fig.set_size_inches(12, 6)
+    fig.suptitle(f"Az objektumokról visszaverődött pontok reflektivitásának átlagáról készült hisztogramok összehasonlítása")
+    ax1.set_title("Reflektivitás átlag hisztogram a madarakon")
+    ax1.hist(reflectivity_dict["bird"], 20, (0, 35), rwidth=0.8)
+    ax1.set_xlabel("Átlag értékek")
+    ax1.set_ylabel("A mérések száma adott szórással")
+    ax1.set_ylim([0, 25])
+    ax2.set_title("Reflektivitás átlag hisztogram a drónon")
+    ax2.hist(reflectivity_dict["drone"], 20, (0, 35), rwidth=0.8, color="orange")
+    ax2.set_xlabel("Átlag értékek")
+    ax2.set_ylabel("A mérések száma adott szórással")
+    ax2.set_ylim([0, 25])
+    plt.show()
+
 
 # ax.errorbar(distance_dict["bird"], reflectivity_dict["bird"], reflectivity_std_dict["bird"], linestyle="None", marker='^', label="madár")
+def drone_or_bird(std, avg, a, b):
+    return "drone" if - a/b * std + b < avg else "bird"
+
+
+accuracy = 0
+best_a = 0
+best_b = 0
+for a in range(20, 35):
+    for b in range(30, 50):
+        count_correct = 0
+        count_all = 0
+        for i in range(len(reflectivity_dict["drone"])):
+            count_correct += 1 if "drone" == drone_or_bird(reflectivity_std_dict["drone"][i], reflectivity_dict["drone"][i], a, b) else 0
+            count_all += 1
+        for i in range(len(reflectivity_dict["bird"])):
+            count_correct += 1 if "bird" == drone_or_bird(reflectivity_std_dict["bird"][i], reflectivity_dict["bird"][i], a, b) else 0
+            count_all += 1
+
+        print(count_correct)
+        print(count_all)
+        print(count_correct / count_all)
+        if count_correct / count_all > accuracy:
+            accuracy = count_correct / count_all
+            best_a = a
+            best_b = b
+
+print(accuracy, best_a, best_b)
