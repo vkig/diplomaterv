@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<launch>
+
+    <node name="background_filter" pkg="background_filter" type="background_filter_node" output="screen" ns="bird_vs_drone"></node>
+    <node name="detector" pkg="background_filter" type="detector_node.py" output="screen" ns="bird_vs_drone"></node>
+
+</launch>

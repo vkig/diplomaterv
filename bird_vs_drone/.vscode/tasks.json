@@ -1,0 +1,41 @@
+{
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ROS: central_catkin_make",
+            "type": "catkin_make",
+            "args": [
+                "--directory",
+				"/home/vkig/diplomaterv/bird_vs_drone",
+                "--pkg",
+                "background_filter",
+                "-j4",
+                "-DCMAKE_BUILD_TYPE=Debug",
+                "-DCMAKE_EXPORT_COMPILE_COMMANDS=1"
+            ],
+            "problemMatcher": "$catkin-gcc",
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "type": "shell",
+            "label": "rosparam",
+            "command": "rosparam",
+            "args": [
+                {
+                    "value": "load",
+                    "quoting": "escape"
+                },
+                {
+                    "value": "margit_hid_1.yaml", // szabadsag_hid.yaml ; margit_hid_1.yaml ; margit_hid_2.yaml ; margit_hid_3.yaml
+                    "quoting": "escape"
+                }
+            ],
+            "options": {
+                "cwd": "${workspaceFolder}/src/background_filter/config"
+            }
+        }
+    ]
+}

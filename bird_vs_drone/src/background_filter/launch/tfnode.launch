@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<launch>
+    <node name="livox_lidar_timefixer" pkg="background_filter" type="livox_lidar_timefixer_node" output="screen" ns="bird_vs_drone" />
+</launch>
